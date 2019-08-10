@@ -1,5 +1,6 @@
-from selenium import webdriver
 from math import ceil
+
+from selenium import webdriver
 
 nc_highway_tax = .03
 sticker = 10000
@@ -22,40 +23,36 @@ def generate_loan_coefficient(apr, dp_percent):
     return calculate(apr, dp_percent)[1] / sticker
     pass
 
-while True:
-    monthly_payment_possible = input("\nhow much can you pay? no non-numeric characters\n")
-    try:
-        monthly_payment_possible = int(monthly_payment_possible)
-        break
-    except ValueError:
-        print("\nNo! Try again!")
-while True:
-    months = input("\nhow many months?\n")
-    try:
-        months = int(months)
-        break
-    except ValueError:
-        print("\n NO! try again!")
-while True:
-    actual_apr = input("\nhow much APR? examples: .065, .1, .3\n")
-    try:
-        actual_apr = float(actual_apr)
-        break
-    except ValueError:
-        print("\n NO! try again!")
-while True:
-    actual_down = input("\nhow much do you want to put down, as a percentage? examples: .065, .1, .3\n")
-    try:
-        actual_down = float(actual_down)
-        break
-    except ValueError:
-        print("\n NO! try again!")
 
-actual_sticker = monthly_payment_possible / (generate_monthly_coefficient(months, actual_apr, actual_down) * generate_loan_coefficient(actual_apr, actual_down))
-actual_down_payment = actual_sticker * actual_down
-print(f"here is what you can afford: ${actual_sticker:,.2f}")
-print(f"down payment: ${actual_down_payment:,.2f}")
+def get():
+    x = 0
+    messages = [["\nMonthly Payment?\n", "\nLoan length in months?\n",
+                 "\nPercent APR?\n",
+                 "\nPercent Down?\n"], []]
+
+    for x in range(0, len(messages[0])):
+        while True:
+            messages[1].append(input(messages[0][x]))
+            try:
+                messages[1][x] = float(messages[1][x])
+                if x >= 2:
+                    if messages[1][x] > 1:
+                        messages[1][x] = messages[1][x] / 100
+                break
+            except ValueError:
+                print("\nNo! Try again!")
+    return messages
+
+
+values = get()
+
+actual_sticker = values[1][0] / (
+            generate_monthly_coefficient(values[1][1], values[1][2], values[1][3]) * generate_loan_coefficient(
+        values[1][2], values[1][3]))
+actual_down_payment = actual_sticker * values[1][3]
+print(f"Affordable Sticker Price: ${actual_sticker:,.2f}\nDown Payment: ${actual_down_payment:,.2f}")
 lookup_price = str(ceil(actual_sticker))
+print("Looking for cars ... ")
 
 browser = webdriver.Firefox()
 browser.get("https://www.autotrader.com/cars-for-sale/Certified+Cars/cars+under+"+lookup_price+"/Pfafftown+NC-27040?searchRadius=50&zip=27040&marketExtension=true&maxPrice="+lookup_price+"&startYear=2017&maxMileage=30000&listingTypes=CERTIFIED&sortBy=relevance&numRecords=25&firstRecord=0")
