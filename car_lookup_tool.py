@@ -24,7 +24,7 @@ def loan_multiplier(apr, dp_percent):
 # Creates a table of questions, storing user input.
 def get_input_values():
     print("Please enter the following information, without dollar signs.")
-    messages = [["\nMonthly Payment ()?\n", "\nLoan length in months?\n",
+    messages = [["\nMonthly Payment?\n", "\nLoan length in months?\n",
                  "\nPercent APR?\n",
                  "\nPercent Down?\n"], []]
 
@@ -55,10 +55,21 @@ affordable_down_payment = affordable_sticker_price * values[1][3]
 print(f"Affordable Sticker Price: ${affordable_sticker_price:,.2f}\nDown Payment: ${affordable_down_payment:,.2f}")
 lookup_price = str(ceil(affordable_sticker_price))
 
+continue_confirmation = input("\nContinue with a car search online using this information?\n Enter N for no.")
+print("To continue, simply press enter.")
+if continue_confirmation.lower() == "n":
+    quit(0)
+
+# Gather basic location information for the web search.
+location = input("Enter city and state (two letter state abbreviation), separated by a comma. Ex. Wichita,KS\n")
+city, state = location.split(",")
+zip = input("Enter ZIP code for search.\n")
+
 # Open Chromedriver to search for the cars on Autotrader.
 print("Looking for cars ... ")
 browser = webdriver.Chrome()
 browser.maximize_window()
 browser.get(("https://www.autotrader.com/cars-for-sale/Certified+Cars/cars+under+{price}/"
-             "Brooklyn+NY-11213?listingTypes=CERTIFIED&searchRadius=25&zip=11213&marketExtension=include&"
-             "maxPrice={price}&isNewSearch=true&sortBy=relevance&numRecords=25&firstRecord=0").format(price=lookup_price))
+             "{city}+{state}-{zip}?listingTypes=CERTIFIED&searchRadius=25&zip={zip}&marketExtension=include&"
+             "maxPrice={price}&isNewSearch=true&sortBy=relevance&numRecords=25&firstRecord=0")\
+             .format(price=lookup_price, zip=zip, city=city, state=state))
