@@ -1,3 +1,4 @@
 # file:  ~/.gitignore
 venv/
 .idea/
+*.log
