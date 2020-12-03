@@ -12,3 +12,7 @@ https://chromedriver.chromium.org/downloads. Run the script using python.
 The script asks for your requested monthly payment, requested length of loan in months, qualified percent APR, and what percent you are ready to put down. It then gives you a sticker price and down payment affordable according to your input. 
 
 After confirmation to continue and asking for location information, the script opens a Chrome window to perform a search on Autotrader.com with location and price terms. 
+
+## Why Selenium and not BeautifulSoup?
+The idea is to let the user to pick up where the tool leaves off, directly browsing vehicles using the provided calculations.
+Selenium allows user interaction while BeautifulSoup only retrieves web data using HTTP requests.
